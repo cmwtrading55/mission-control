@@ -1,8 +1,13 @@
-// Stub for Cloudflare Pages build
-export const query = (config: any) => config;
-export const mutation = (config: any) => config;
-export const action = (config: any) => config;
-export const internalQuery = (config: any) => config;
-export const internalMutation = (config: any) => config;
-export const internalAction = (config: any) => config;
-export const httpAction = (config: any) => config;
+/* eslint-disable */
+/**
+ * Generated server-side helpers for use with Convex.
+ */
+export {
+  query,
+  mutation,
+  action,
+  internalQuery,
+  internalMutation,
+  internalAction,
+  httpAction,
+} from "convex/server";

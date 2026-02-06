@@ -1,21 +1,25 @@
 // Stub for Cloudflare Pages build
 // Real Convex client uses NEXT_PUBLIC_CONVEX_URL at runtime
 
-// Create stub functions that return undefined
-const createStub = () => {
-  return new Proxy(() => undefined, {
-    get: () => createStub(),
-  });
-};
+// Stub function that returns undefined
+const stubFn = () => undefined;
 
 export const api = {
   activities: {
-    getActivityStats: createStub(),
-    listActivities: createStub(),
-    listScheduledTasks: createStub(),
-    getWeeklySchedule: createStub(),
-    globalSearch: createStub(),
+    getActivityStats: stubFn,
+    listActivities: stubFn,
+    listScheduledTasks: stubFn,
+    getWeeklySchedule: stubFn,
+    globalSearch: stubFn,
   },
 };
 
-export const internal = {};
+export const internal = {
+  activities: {
+    getActivityStats: stubFn,
+    listActivities: stubFn,
+    listScheduledTasks: stubFn,
+    getWeeklySchedule: stubFn,
+    globalSearch: stubFn,
+  },
+};

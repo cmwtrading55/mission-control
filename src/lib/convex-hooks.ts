@@ -3,10 +3,7 @@ import { useConvexAvailable } from "@/components/ConvexProvider";
 import { useQuery as useConvexQuery, useMutation as useConvexMutation, usePaginatedQuery as useConvexPaginatedQuery } from "convex/react";
 
 // Wrapper that returns undefined when Convex isn't available
-export function useQuery<Args extends any[], T>(
-  query: any,
-  ...args: Args
-): T | undefined {
+export function useQuery(query: any, ...args: any[]): any {
   const isAvailable = useConvexAvailable();
   
   if (!isAvailable) {
@@ -18,11 +15,7 @@ export function useQuery<Args extends any[], T>(
 }
 
 // Wrapper for paginated queries
-export function usePaginatedQuery<Args extends any[], T>(
-  query: any,
-  args: Args[0],
-  options: { initialNumItems: number }
-): { results: T[]; status: "CanLoadMore" | "LoadingMore" | "Exhausted"; loadMore: (n: number) => void } {
+export function usePaginatedQuery(query: any, args: any, options: { initialNumItems: number }): any {
   const isAvailable = useConvexAvailable();
   
   if (!isAvailable) {
@@ -37,9 +30,7 @@ export function usePaginatedQuery<Args extends any[], T>(
   return useConvexPaginatedQuery(query, args, options);
 }
 
-export function useMutation<Args extends any[], T>(
-  mutation: any
-): (...args: Args) => Promise<T> {
+export function useMutation(mutation: any): any {
   const isAvailable = useConvexAvailable();
   
   if (!isAvailable) {

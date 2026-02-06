@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { useQuery } from "convex/react";
+import { useQuery } from "@/lib/convex-hooks";
 import { api } from "@convex/_generated/api";
 import { ActivityCard } from "@/components/ActivityCard";
 import { TaskCard } from "@/components/TaskCard";

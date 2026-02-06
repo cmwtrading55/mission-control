@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { addDays, addWeeks, format, startOfWeek, subWeeks } from "date-fns";
-import { useQuery } from "convex/react";
+import { useQuery } from "@/lib/convex-hooks";
 import { api } from "@convex/_generated/api";
 import { StatusBadge } from "@/components/StatusBadge";
 

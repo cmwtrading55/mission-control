@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { usePaginatedQuery, useQuery } from "convex/react";
+import { usePaginatedQuery, useQuery } from "@/lib/convex-hooks";
 import { api } from "@convex/_generated/api";
 import { ActivityCard } from "@/components/ActivityCard";
 

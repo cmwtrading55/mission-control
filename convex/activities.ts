@@ -17,16 +17,18 @@ export const listActivities = query({
   }),
   handler: async (ctx: any, args: any) => {
     const limit = args.limit ?? 50;
-    const results = await ctx.db
+    let query = ctx.db
       .query("activities")
       .withIndex("by_timestamp", (q: any) =>
         args.cursor ? q.lt("timestamp", args.cursor) : q
       )
-      .filter((q: any) =>
-        args.type ? q.eq(q.field("type"), args.type) : q
-      )
-      .order("desc")
-      .take(limit + 1);
+      .order("desc");
+    
+    if (args.type) {
+      query = query.filter((q: any) => q.eq(q.field("type"), args.type));
+    }
+    
+    const results = await query.take(limit + 1);
 
     const items = results.slice(0, limit);
     const nextCursor = results.length > limit ? items[items.length - 1].timestamp : undefined;
@@ -86,13 +88,10 @@ export const getWeeklySchedule = query({
     
     return await ctx.db
       .query("scheduledTasks")
-      .filter((q: any) =>
-        q.and(
-          q.gte(q.field("nextRunAt"), args.weekStart),
-          q.lt(q.field("nextRunAt"), weekEnd)
-        )
+      .withIndex("by_next_run", (q: any) => 
+        q.gte("nextRunAt", args.weekStart).lt("nextRunAt", weekEnd)
       )
-      .order("asc", "nextRunAt")
+      .order("asc")
       .collect();
   },
 });

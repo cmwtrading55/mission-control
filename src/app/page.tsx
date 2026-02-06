@@ -41,7 +41,7 @@ export default function DashboardPage() {
           <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
             <p className="text-xs uppercase text-slate-400">Active Tasks</p>
             <p className="mt-2 text-2xl font-semibold text-slate-100">
-              {tasks?.length ?? "--"}
+              {(tasks as any[])?.length ?? "--"}
             </p>
           </div>
           <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">

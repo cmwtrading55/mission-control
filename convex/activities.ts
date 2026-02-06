@@ -44,7 +44,7 @@ export const listActivitiesPaginated = query({
     type: v.optional(v.string()),
     paginationOpts: v.object({
       numItems: v.number(),
-      cursor: v.union(v.string(), v.null(), v.undefined()),
+      cursor: v.optional(v.union(v.string(), v.null())),
       id: v.optional(v.number()),
     }),
   },

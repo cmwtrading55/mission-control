@@ -19,7 +19,7 @@ export default function SearchPage() {
 
   const grouped = useMemo(() => {
     const groups: Record<string, any[]> = {};
-    (results ?? []).forEach((item: any) => {
+    ((results as any[]) ?? []).forEach((item: any) => {
       const type = item.resultType || item.contentType || "other";
       if (filter !== "all" && filter !== type) return;
       if (!groups[type]) groups[type] = [];

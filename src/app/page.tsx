@@ -18,7 +18,7 @@ export default function DashboardPage() {
     if (!tasks) return [];
     const now = Date.now();
     const nextDay = now + 24 * 60 * 60 * 1000;
-    return tasks.filter((task: any) => task.nextRunAt >= now && task.nextRunAt <= nextDay);
+    return (tasks as any[]).filter((task: any) => task.nextRunAt >= now && task.nextRunAt <= nextDay);
   }, [tasks]);
 
   return (
@@ -79,7 +79,7 @@ export default function DashboardPage() {
             </Link>
           </div>
           <div className="space-y-3">
-            {activitiesData?.items?.map((activity: any) => (
+            {((activitiesData as any)?.items ?? [])?.map((activity: any) => (
               <ActivityCard key={activity._id ?? activity.timestamp} activity={activity} />
             ))}
             {!activitiesData && (

@@ -60,7 +60,7 @@ export default function CalendarPage() {
       <section className="grid gap-4 lg:grid-cols-[2.2fr_0.8fr]">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {days.map((day) => {
-            const dayTasks = (schedule ?? []).filter(
+            const dayTasks = ((schedule as any[]) ?? []).filter(
               (task: any) => task.nextRunAt >= day.getTime() && task.nextRunAt < addDays(day, 1).getTime()
             );
             return (

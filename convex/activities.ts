@@ -44,7 +44,7 @@ export const listActivitiesPaginated = query({
     type: v.optional(v.string()),
     paginationOpts: v.object({
       numItems: v.number(),
-      cursor: v.optional(v.string()),
+      cursor: v.union(v.string(), v.null(), v.undefined()),
       id: v.optional(v.number()),
     }),
   },
@@ -54,7 +54,8 @@ export const listActivitiesPaginated = query({
     isDone: v.boolean(),
   }),
   handler: async (ctx: any, args: any) => {
-    const { numItems, cursor } = args.paginationOpts;
+    const { numItems } = args.paginationOpts;
+    const cursor = args.paginationOpts.cursor;
     
     let dbQuery = ctx.db
       .query("activities")
@@ -65,7 +66,7 @@ export const listActivitiesPaginated = query({
     }
     
     // Handle cursor-based pagination
-    if (cursor) {
+    if (cursor && cursor !== null) {
       const cursorTimestamp = parseInt(cursor, 10);
       dbQuery = dbQuery.filter((q: any) => q.lt(q.field("timestamp"), cursorTimestamp));
     }

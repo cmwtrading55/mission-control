@@ -1,11 +1,12 @@
 // Activity tracking schema for Mission Control
 // Records every action the AI assistant performs
 
+import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-// Simple schema definition for placeholder
-export default {
-  activities: {
+export default defineSchema({
+  // Activity Feed - every single action recorded
+  activities: defineTable({
     timestamp: v.number(),
     type: v.string(),
     description: v.string(),
@@ -15,8 +16,13 @@ export default {
     status: v.string(),
     durationMs: v.optional(v.number()),
     tokenCount: v.optional(v.number()),
-  },
-  scheduledTasks: {
+  })
+    .index("by_timestamp", ["timestamp"])
+    .index("by_type", ["type"])
+    .index("by_status", ["status"]),
+
+  // Scheduled Tasks - for calendar view
+  scheduledTasks: defineTable({
     name: v.string(),
     description: v.string(),
     schedule: v.object({
@@ -30,19 +36,29 @@ export default {
     enabled: v.boolean(),
     channel: v.optional(v.string()),
     model: v.optional(v.string()),
-  },
-  searchIndex: {
+  })
+    .index("by_next_run", ["nextRunAt"])
+    .index("by_enabled", ["enabled"]),
+
+  // Search index for global search
+  searchIndex: defineTable({
     content: v.string(),
     contentType: v.string(),
     sourcePath: v.string(),
     title: v.optional(v.string()),
     timestamp: v.number(),
     metadata: v.optional(v.any()),
-  },
-  memories: {
+  })
+    .index("by_content_type", ["contentType"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Memory documents
+  memories: defineTable({
     path: v.string(),
     content: v.string(),
     lastModified: v.number(),
     type: v.string(),
-  },
-};
+  })
+    .index("by_path", ["path"])
+    .index("by_type", ["type"]),
+});

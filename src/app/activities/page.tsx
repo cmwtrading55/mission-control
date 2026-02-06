@@ -18,7 +18,7 @@ const activityTypes = [
 export default function ActivitiesPage() {
   const [filter, setFilter] = useState("all");
   const { results, status, loadMore } = usePaginatedQuery(
-    api.activities.listActivities,
+    api.activities.listActivitiesPaginated,
     { type: filter === "all" ? undefined : filter },
     { initialNumItems: 20 }
   );

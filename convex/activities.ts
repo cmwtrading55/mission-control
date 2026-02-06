@@ -5,6 +5,7 @@ import { v } from "convex/values";
 
 // ACTIVITY FEED QUERIES
 
+// For useQuery - returns wrapped result
 export const listActivities = query({
   args: {
     limit: v.optional(v.number()),
@@ -17,7 +18,7 @@ export const listActivities = query({
   }),
   handler: async (ctx: any, args: any) => {
     const limit = args.limit ?? 50;
-    let query = ctx.db
+    let dbQuery = ctx.db
       .query("activities")
       .withIndex("by_timestamp", (q: any) =>
         args.cursor ? q.lt("timestamp", args.cursor) : q
@@ -25,15 +26,57 @@ export const listActivities = query({
       .order("desc");
     
     if (args.type) {
-      query = query.filter((q: any) => q.eq(q.field("type"), args.type));
+      dbQuery = dbQuery.filter((q: any) => q.eq(q.field("type"), args.type));
     }
     
-    const results = await query.take(limit + 1);
+    const results = await dbQuery.take(limit + 1);
 
     const items = results.slice(0, limit);
     const nextCursor = results.length > limit ? items[items.length - 1].timestamp : undefined;
 
     return { items, nextCursor };
+  },
+});
+
+// For usePaginatedQuery - returns items directly for Convex pagination
+export const listActivitiesPaginated = query({
+  args: {
+    type: v.optional(v.string()),
+    paginationOpts: v.object({
+      numItems: v.number(),
+      cursor: v.optional(v.string()),
+    }),
+  },
+  returns: v.object({
+    page: v.array(v.any()),
+    continueCursor: v.optional(v.string()),
+    isDone: v.boolean(),
+  }),
+  handler: async (ctx: any, args: any) => {
+    const { numItems, cursor } = args.paginationOpts;
+    
+    let dbQuery = ctx.db
+      .query("activities")
+      .order("desc");
+    
+    if (args.type) {
+      dbQuery = dbQuery.withIndex("by_type", (q: any) => q.eq("type", args.type));
+    }
+    
+    // Handle cursor-based pagination
+    if (cursor) {
+      const cursorTimestamp = parseInt(cursor, 10);
+      dbQuery = dbQuery.filter((q: any) => q.lt(q.field("timestamp"), cursorTimestamp));
+    }
+    
+    const results = await dbQuery.take(numItems + 1);
+    const page = results.slice(0, numItems);
+    const isDone = results.length <= numItems;
+    const continueCursor = !isDone && page.length > 0 
+      ? String(page[page.length - 1].timestamp) 
+      : undefined;
+
+    return { page, continueCursor, isDone };
   },
 });
 

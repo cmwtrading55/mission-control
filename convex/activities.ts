@@ -45,6 +45,7 @@ export const listActivitiesPaginated = query({
     paginationOpts: v.object({
       numItems: v.number(),
       cursor: v.optional(v.string()),
+      id: v.optional(v.number()),
     }),
   },
   returns: v.object({
@@ -139,8 +140,7 @@ export const getWeeklySchedule = query({
   },
 });
 
-// GLOBAL SEARCH
-
+// GLOBAL SEARCH - simplified without contains
 export const globalSearch = query({
   args: {
     query: v.string(),
@@ -149,31 +149,42 @@ export const globalSearch = query({
   returns: v.array(v.any()),
   handler: async (ctx: any, args: any) => {
     const limit = args.limit ?? 20;
+    const searchTerm = args.query.toLowerCase();
     
-    // Search across activities
+    // Get recent activities (Convex doesn't have full-text search in basic queries)
     const activities = await ctx.db
       .query("activities")
-      .filter((q: any) => q.contains(q.field("description"), args.query))
       .order("desc", "timestamp")
-      .take(limit);
+      .take(limit * 2);
+    
+    // Filter client-side for description match
+    const filteredActivities = activities.filter((a: any) => 
+      a.description && a.description.toLowerCase().includes(searchTerm)
+    ).slice(0, limit);
 
-    // Search memories
+    // Get memories
     const memories = await ctx.db
       .query("memories")
-      .filter((q: any) => q.contains(q.field("content"), args.query))
-      .take(limit);
+      .take(limit * 2);
+    
+    const filteredMemories = memories.filter((m: any) => 
+      m.content && m.content.toLowerCase().includes(searchTerm)
+    ).slice(0, limit);
 
-    // Search searchIndex if available
+    // Get indexed content
     const indexed = await ctx.db
       .query("searchIndex")
-      .filter((q: any) => q.contains(q.field("content"), args.query))
       .order("desc", "timestamp")
-      .take(limit);
+      .take(limit * 2);
+    
+    const filteredIndexed = indexed.filter((i: any) => 
+      i.content && i.content.toLowerCase().includes(searchTerm)
+    ).slice(0, limit);
 
     return [
-      ...activities.map((a: any) => ({ ...a, resultType: "activity" })),
-      ...memories.map((m: any) => ({ ...m, resultType: "memory" })),
-      ...indexed.map((i: any) => ({ ...i, resultType: "indexed" })),
+      ...filteredActivities.map((a: any) => ({ ...a, resultType: "activity" })),
+      ...filteredMemories.map((m: any) => ({ ...m, resultType: "memory" })),
+      ...filteredIndexed.map((i: any) => ({ ...i, resultType: "indexed" })),
     ].sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
   },
 });

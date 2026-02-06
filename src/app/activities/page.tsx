@@ -42,8 +42,8 @@ export default function ActivitiesPage() {
   }, [status, loadMore]);
 
   const byType = useMemo(() => {
-    if (!stats?.byType) return [] as Array<[string, number]>;
-    return (Object.entries(stats.byType) as Array<[string, number]>).sort((a, b) => b[1] - a[1]);
+    if (!stats || !(stats as any).byType) return [] as Array<[string, number]>;
+    return (Object.entries((stats as any).byType) as Array<[string, number]>).sort((a, b) => b[1] - a[1]);
   }, [stats]);
 
   return (

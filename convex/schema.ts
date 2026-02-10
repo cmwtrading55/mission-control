@@ -61,4 +61,19 @@ export default defineSchema({
   })
     .index("by_path", ["path"])
     .index("by_type", ["type"]),
+
+  // Health checks for cron jobs and system status
+  healthChecks: defineTable({
+    jobName: v.string(),
+    status: v.string(), // "success", "error", "stale", "running", "unknown", "no_logs"
+    lastRunAt: v.optional(v.number()),
+    exitCode: v.optional(v.number()),
+    durationMs: v.optional(v.number()),
+    errorMessage: v.optional(v.string()),
+    collectedAt: v.number(),
+    hostname: v.string(),
+  })
+    .index("by_jobName", ["jobName"])
+    .index("by_status", ["status"])
+    .index("by_collectedAt", ["collectedAt"]),
 });
